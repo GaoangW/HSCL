@@ -21,6 +21,15 @@ CUDA_VISIBLE_DEVICES=0 python -m torch.distributed.launch --nproc_per_node=1 tra
 ```
 python eval.py --mode ood_pre --dataset cifar10 --model resnet18 --ood_score CSI --shift_trans_type rotation --print_score --ood_samples 10 --resize_factor 0.54 --resize_fix --one_class_idx 0 --load_path "logs/cifar10_resnet18_unsup_simclr_CSI_shift_rotation_one_class_0/last.model" 
 ```
+## Citation
+```
+@article{wang2022hierarchical,
+  title={Hierarchical Semi-Supervised Contrastive Learning for Contamination-Resistant Anomaly Detection},
+  author={Wang, Gaoang and Zhan, Yibing and Wang, Xinchao and Song, Mingli and Nahrstedt, Klara},
+  journal={arXiv preprint arXiv:2207.11789},
+  year={2022}
+}
+```
 
 ## Acknowledgement
 The code structure is built on https://github.com/alinlab/CSI. We thank authors of CSI [1] to provide the source code and the solid work.

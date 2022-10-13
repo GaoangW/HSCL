@@ -56,7 +56,6 @@ def eval_ood_detection(P, model, id_loader, ood_loaders, ood_scores, train_loade
     f_sim = [f.mean(dim=1) for f in feats_train['simclr'].chunk(P.K_shift, dim=1)]  # list of (M, d)
     f_shi = [f.mean(dim=1) for f in feats_train['shift'].chunk(P.K_shift, dim=1)]  # list of (M, 4)
 
-    #import pdb; pdb.set_trace()
 
     weight_sim = []
     weight_shi = []
@@ -122,8 +121,6 @@ def eval_ood_detection(P, model, id_loader, ood_loaders, ood_scores, train_loade
 
 
 def get_scores(P, feats_dict, ood_score, normal_vec):
-    # kth nearest
-    k = 5
 
     # convert to gpu tensor
     feats_sim = feats_dict['simclr'].to(device)
@@ -219,7 +216,6 @@ def _get_features(P, model, loader, interp=False, imagenet=False, simclr_aug=Non
             with torch.no_grad():
                 kwargs = {layer: True for layer in layers}  # only forward selected layers
                 _, output_aux = model(x_t, **kwargs)
-                #import pdb; pdb.set_trace()
                 vis_feat.append(output_aux['simclr'][:len(tmp_label)])
 
             # add features in one batch

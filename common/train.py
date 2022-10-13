@@ -76,7 +76,7 @@ if P.multi_gpu:
 else:
     train_loader = DataLoader(train_set, shuffle=True, batch_size=P.batch_size, **kwargs)
     test_loader = DataLoader(test_set, shuffle=False, batch_size=P.test_batch_size, **kwargs)
-#import pdb; pdb.set_trace()
+
 
 if P.ood_dataset is None:
     if P.one_class_idx is not None:

@@ -46,7 +46,6 @@ def NT_xent_v2(sim):
     scales = pos_scale+neg_scale
 
     sim = torch.exp(sim*scales)*(1 - eye)
-    #import pdb; pdb.set_trace()
 
     denom = torch.sum(sim, dim=1, keepdim=True)
     sim = -torch.log(sim / (denom + eps) + eps)  # loss matrix
@@ -102,7 +101,6 @@ def Supervised_NT_xent(sim_matrix, labels, temperature=0.5, chunk=2, eps=1e-8, m
 
     labels = labels.contiguous().view(-1, 1)
     Mask = torch.eq(labels, labels.t()).float().to(device)
-    #Mask = eye * torch.stack([labels == labels[i] for i in range(labels.size(0))]).float().to(device)
     Mask = Mask / (Mask.sum(dim=1, keepdim=True) + eps)
 
     loss = torch.sum(Mask * sim_matrix) / (2 * B)

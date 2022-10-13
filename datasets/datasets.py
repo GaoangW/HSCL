@@ -74,12 +74,10 @@ class lsun_fix_dataset(Dataset):
             with open(img_path, 'rb') as f:
                 img = Image.open(f)
                 img = np.array(img.convert('RGB'))
-                #import pdb; pdb.set_trace()
                 self.data.append(img)
             
             self.targets.append(class_id)
 
-        #import pdb; pdb.set_trace()
         self.data = np.stack(self.data)
 
     def __getitem__(self, index):
@@ -198,7 +196,6 @@ def get_dataset(P, dataset, test_only=False, image_size=None, download=True, eva
         n_classes = 10
         train_set = datasets.CIFAR10(DATA_PATH, train=True, download=download, transform=train_transform)
         test_set = datasets.CIFAR10(DATA_PATH, train=False, download=download, transform=test_transform)
-        #import pdb; pdb.set_trace()
 
     elif dataset == 'cifar100':
         image_size = (32, 32, 3)
@@ -216,16 +213,10 @@ def get_dataset(P, dataset, test_only=False, image_size=None, download=True, eva
         test_set = datasets.ImageFolder(test_dir, transform=test_transform)
 
     elif dataset == 'lsun_fix':
-        '''
-        assert test_only and image_size is not None
-        test_dir = os.path.join(DATA_PATH, 'LSUN_fix')
-        test_set = datasets.ImageFolder(test_dir, transform=test_transform)
-        '''
         image_size = (32, 32, 3)
         n_classes = 10
         train_set = lsun_fix_dataset(lsun_fix_path, transform=train_transform, train=True)
         test_set = lsun_fix_dataset(lsun_fix_path, transform=test_transform, train=False)
-        #import pdb; pdb.set_trace()
 
     elif dataset == 'imagenet_resize':
         assert test_only and image_size is not None
@@ -345,12 +336,10 @@ def get_subclass_dataset(dataset, classes):
 
     indices = []
     for idx, tgt in enumerate(dataset.targets):
-        #import pdb; pdb.set_trace()
         if tgt in classes:
             indices.append(idx)
 
     dataset = Subset(dataset, indices)
-    #import pdb; pdb.set_trace()
     return dataset
 
 def get_subclass_with_abnormal_dataset(dataset, classes, eta=0.05):
@@ -363,9 +352,7 @@ def get_subclass_with_abnormal_dataset(dataset, classes, eta=0.05):
     N_class = len(cls_list)
     sample_num = int(np.sum(tgt_array==classes[0])*eta/(1-eta)/(N_class-1))
     cls_num = np.zeros(N_class)
-    #import pdb; pdb.set_trace()
     for idx, tgt in enumerate(dataset.targets):
-        #import pdb; pdb.set_trace()
         if tgt in classes:
             indices.append(idx)
         else:
@@ -374,7 +361,6 @@ def get_subclass_with_abnormal_dataset(dataset, classes, eta=0.05):
                 cls_num[tgt] += 1
 
     dataset = Subset(dataset, indices)
-    #import pdb; pdb.set_trace()
     return dataset
 
 def get_subclass_with_mixed_dataset(dataset, classes, normal_eta=0.05, polluted_eta=0.05, abnormal_eta=0.05):
@@ -391,22 +377,15 @@ def get_subclass_with_mixed_dataset(dataset, classes, normal_eta=0.05, polluted_
         total_inclass_num += np.sum(tgt_array==classes[n])
     total_inclass_num = int(total_inclass_num)
 
-    '''
-    abnormal_num = math.ceil(total_inclass_num*abnormal_eta/(1-abnormal_eta-polluted_eta)/(N_class-len(classes)))
-    polluted_num = math.ceil(total_inclass_num*polluted_eta/(1-abnormal_eta-polluted_eta)/(N_class-len(classes)))
-    ab_cnt = np.zeros(N_class)
-    normal_num = math.ceil(total_inclass_num*normal_eta)
-    '''
+
     abnormal_num = round(total_inclass_num*abnormal_eta/(1-abnormal_eta)/(N_class-len(classes)))
     polluted_num = round(total_inclass_num*polluted_eta/(1-polluted_eta)/(N_class-len(classes)))
     ab_cnt = np.zeros(N_class)
     normal_num = round(total_inclass_num*normal_eta)
     
     polluted_ab_cnt = np.zeros(N_class)
-    #import pdb; pdb.set_trace()
     normal_cnt = 0
     for idx, tgt in enumerate(dataset.targets):
-        #import pdb; pdb.set_trace()
         if tgt in classes:
             if normal_cnt<normal_num:
                 dataset.targets[idx] = dataset.targets[idx]+N_class
@@ -422,7 +401,6 @@ def get_subclass_with_mixed_dataset(dataset, classes, normal_eta=0.05, polluted_
                 polluted_ab_cnt[tgt] += 1
 
     dataset = Subset(dataset, indices)
-    #import pdb; pdb.set_trace()
     return dataset
 
 
@@ -439,23 +417,18 @@ def get_subclass_with_mixed_unlabeled_dataset(dataset, classes, eta=0.05):
     ab_cnt = np.zeros(N_class)
     normal_num = int(np.sum(tgt_array==classes[0])*eta/(1-eta))
     polluted_ab_cnt = np.zeros(N_class)
-    #import pdb; pdb.set_trace()
     normal_cnt = 0
     for idx, tgt in enumerate(dataset.targets):
-        #import pdb; pdb.set_trace()
         if tgt in classes:
             indices.append(idx)
         else:
             if ab_cnt[tgt]<abnormal_num:
-                #dataset.targets[idx] = dataset.targets[idx]+N_class
-                #indices.append(idx)
                 ab_cnt[tgt] += 1
             elif polluted_ab_cnt[tgt]<polluted_num:
                 indices.append(idx)
                 polluted_ab_cnt[tgt] += 1
 
     dataset = Subset(dataset, indices)
-    #import pdb; pdb.set_trace()
     return dataset
 
 def get_simclr_eval_transform_imagenet(sample_num, resize_factor, resize_fix):
